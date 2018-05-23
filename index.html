@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>捐赠</title>
+    <link href="css/index.css" rel="stylesheet">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="wrap">
+            <div class="inner-text">
+                <h1>Buy Me A Cup Of Coffee</h1>
+                <p class="paragraph">
+                    如果我的代码帮助到了你，请我喝杯咖啡吧
+                </p>
+                <ul>
+                    <li>如果帮您解决了一个Bug</li>
+                    <li>如果帮您解决了一个需求</li>
+                    <li>如果您看我顺眼</li>
+                    <li>如果您有钱任性</li>
+                </ul>
+            </div>
+            <div class="donate-list">
+                <ul class="scroll-box">
+                    <li>2018/05/12 n1sdf**请我喝了杯星巴克</li>
+                    <li>2018/05/11 n1wrf**请我喝了杯雀巢速溶</li>
+                    <li>2018/05/11 n1acx**请我喝了杯挂耳</li>
+                    <li>2018/05/10 n1gk1**请我喝了杯手冲</li>
+                    <li>2018/05/09 n1sjb**请我喝了杯星巴克</li>
+                </ul>
+            </div>
+        </div>
+        <div class="notif">
+            <div class="wrap2" id="notifC">
+                您的钱包余额为：<b id="balance">0NAS</b>
+                <!--<b>此网站功能依赖于星云链钱包Chrome插件</b>-->
+                <!--<a href="https://github.com/nebulasio/web-wallet" target="_blank">立即下载</a>-->
+            </div>
+        </div>
+    </header>
+    <div id="main-content">
+        <div class="container">
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active"><a href="#donate" aria-controls="donate" role="tab" data-toggle="tab">捐赠</a></li>
+                <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">我的历史捐赠</a></li>
+                <li role="presentation" ><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">我收到的捐赠</a></li>
+                <li role="presentation"><a href="#share" aria-controls="share" role="tab" data-toggle="tab">创建捐赠页面</a></li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="donate">
+                    <form>
+                        <div class="form-group">
+                            <label for="donate-value">捐赠金额</label>
+                            <div class="btn-group" role="group">
+                                <div class="btn-group" data-toggle="buttons">
+                                    <label class="btn btn-primary active">
+                                        <input type="radio" name="options" id="option1" autocomplete="off" checked value="1"> 大杯星冰乐
+                                    </label>
+                                    <label class="btn btn-primary">
+                                        <input type="radio" name="options" id="option2" autocomplete="off" value="0.5"> 大杯美式
+                                    </label>
+                                    <label class="btn btn-primary">
+                                        <input type="radio" name="options" id="option3" autocomplete="off" value="0.1"> 雀巢速溶
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <input type="number" step="0.001" min="0" class="form-control" id="donate-value" aria-describedby="basic-addon2">
+                                <span class="input-group-addon" id="basic-addon2">NAS</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="donate-comment">留言</label>
+                            <input type="text"  maxlength="40" class="form-control" id="donate-comment" placeholder="给他一点鼓励" >
+                        </div>
+                        <button type="button" class="btn btn-primary" id="btnSubmit">Donate</button>
+                    </form>
+                </div>
+                <div role="tabpanel" class="tab-pane" id="profile">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <td>时间</td>
+                            <td>受益人</td>
+                            <td>金额</td>
+                            <td>留言</td>
+                        </thead>
+                        <tbody class="history-donate">
+                        </tbody>
+                    </table>
+                    <nav aria-label="...">
+                        <ul class="pager">
+                            <li class="disabled p1P"><a href="#">上一页</a></li>
+                            <li><a href="#" class="p1N">下一页</a></li>
+                        </ul>
+                    </nav>
+                </div>
+                <div role="tabpanel" class="tab-pane" id="messages">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                        <td>时间</td>
+                        <td>捐赠人</td>
+                        <td>金额</td>
+                        <td>留言</td>
+                        </thead>
+                        <tbody class="user-donate">
+                        </tbody>
+                    </table>
+                    <nav aria-label="...">
+                        <ul class="pager">
+                            <li class="disabled p2P"><a href="#">上一页</a></li>
+                            <li><a href="#" class="p2N">下一页</a></li>
+                        </ul>
+                    </nav>
+                </div>
+                <div role="tabpanel" class="tab-pane" id="share">
+                    <div class="share-div">
+                        <h3>
+                            您的专属捐赠页面已经创建完毕
+                        </h3>
+                        <p>您可以选择<b>复制</b>捐赠页面的url，或<b>下载</b>捐赠页面二维码</p>
+                        <div class="input-group">
+                        <span class="input-group-btn">
+                         <button class="btn btn-default" type="button" id="btn-copy-url"
+                                 data-clipboard-target="#share-link">复制</button>
+                        </span>
+                            <input type="text" class="form-control" readonly id="share-link">
+                        </div>
+                        <div id="qr-area">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <footer>
+        <p>Design By Yang. Powered By <a href="nebulas.io" target="_blank">Nebulas</a>
+            And <a href="#" target="_blank">Bootstrap</a></p>
+    </footer>
+
+    <script src="lib/jquery-3.3.1.min.js"></script>
+    <script src="lib/nebulas.js"></script>
+    <script src="lib/nebPay.js"></script>
+    <script src="lib/bootstrap.min.js"></script>
+    <script src="lib/qrcode.min.js"></script>
+    <script src="lib/clipboard.min.js"></script>
+    <script>
+        //钱包插件
+        if(typeof(webExtensionWallet) === "undefined"){
+            $('#notifC').html('<b>此网站功能依赖于星云链钱包Chrome插件</b> <a href="https://github.com/nebulasio/web-wallet" target="_blank">立即下载</a>');
+        }
+        //捐赠页面
+        $('#donate-value').val(1);
+        $('input[name=options]').on('change',function () {
+            let value = $(this).attr('value');
+            $('#donate-value').val(value);
+        });
+
+        //注意交易reject处理异常
+        let chainnetConfig = {
+            mainnet: {
+                name: "主网",
+                contractAddress: "n1jWpKadorv27XgSbo4WRZvsyCdAajkEP4B",
+                txhash: "04222aa816c36a7895efd59256f4f2844fae253064ebc40c155266e3d6cc5220",
+                host: "https://mainnet.nebulas.io",
+                payhost: "https://pay.nebulas.io/api/mainnet/pay"
+            },
+            testnet: {
+                name: "测试网",
+                contractAddress: "n1m6TVnQdqG7VkgynvDZeCsJJVnNYKdU8JW",
+                txhash: "0e617d41412a608d06b2419f2ced4818739960ed4677dc2c1fd10a1d881b9f54",
+                host: "https://testnet.nebulas.io",
+                payhost: "https://pay.nebulas.io/api/pay"
+            }
+        };
+        let chain = "testnet";
+        let chainInfo = chainnetConfig[chain];
+        const testNetAddr = "n1m6TVnQdqG7VkgynvDZeCsJJVnNYKdU8JW";
+        let toAddr = "n1G7rADvoFkEcrSwJZJpy9xW37JwkW2n3Cq";
+        let host = "www.example.com";
+        let nebulas = require("nebulas");
+        let NebPay = require("nebpay");
+        let Account = nebulas.Account;
+        let neb = new nebulas.Neb();
+        let nebPay = new NebPay();
+        let HttpRequest = nebulas.HttpRequest;
+        neb.setRequest(new HttpRequest(chainInfo.host));
+        let Unit = nebulas.Unit;
+        let Utils = nebulas.Utils;
+        let user = {
+            address: null,
+            balance: 0,
+            txhash: null
+        };
+        let nebState;
+        let userDList;
+        let dlist;
+        //TODO 对两个数组进行排序
+        $().ready(function () {
+            //通过url获取受捐者账户信息
+            toAddr = getQueryString("to") || "n1G7rADvoFkEcrSwJZJpy9xW37JwkW2n3Cq";
+            //查询Neb状态
+            fetchNebState();
+            //查询钱包账户信息
+            getWallectInfo();
+        });
+        function fetchNebState() {
+            neb.api.getNebState().then(function (state) {
+                nebState = state;
+                console.log(nebState);
+                //刷新信息
+                sync();
+            })
+        }
+        function sync(index1 = 1, index2 = 1) {
+            fetchUserDonations(index1);
+            fetchDonations(index2);
+        }
+        //我的历史捐赠
+        function fetchUserDonations(index = 1, size = 5) {
+            neb.api.call({
+                chainID: nebState.chain_id,
+                from: user.address,
+                to: chainInfo.contractAddress,
+                value: 0,
+                gasPrice: 1000000,
+                gasLimit: 2000000,
+                contract: {
+                    function: "getUserDonations",
+                    args: JSON.stringify([index,size])
+                }
+            }).then(function (resp) {
+                let result = JSON.parse(resp.result);
+                if(result){
+                    userDList = result;
+                    console.log(result);
+                    let str = createNewRows(userDList);
+                    $('.history-donate').html(str);
+                }
+            })
+        }
+        //我收到的捐赠
+        function fetchDonations(index = 1, size = 5) {
+            neb.api.call({
+                chainID: nebState.chain_id,
+                from: toAddr,
+                to: chainInfo.contractAddress,
+                value: 0,
+                gasPrice: 1000000,
+                gasLimit: 2000000,
+                contract: {
+                    function: "getDonations",
+                    args: JSON.stringify([index,size])
+                }
+            }).then(function (resp) {
+                let result = JSON.parse(resp.result);
+                if(result){
+                    dlist = result;
+                    console.log(result);
+                    let str = createNewRows(dlist);
+                    $('.user-donate').html(str);
+
+                    $('.scroll-box').html(createNewLi(result))
+                }
+            })
+        }
+
+        function createNewRows(list) {
+            if(!list || list.length == 0){
+                return "您还没有一笔donate";
+            }
+            let str = '';
+            list.forEach((item)=>{
+                let s =  "<tr><td>"+formatDateTime(item.time)+"</td><td>"+item.from+"</td><td>"+
+                    wei2NAS(item.value)+"NAS"+"</td><td>"+'<button type="button" class="btn btn-default btn-sm" data-container="body" data-placement="left" data-toggle="popover" title="留言详情" data-content="'+item.comment+'">' +
+                    '查看留言</button></td></tr>';
+                str+=s;
+            });
+            return str;
+        }
+
+        function createNewLi(list) {
+            let str = '';
+            list.forEach((item)=>{
+                let s =  "<li>"+formatDateTime(item.time)+" "+item.from.toString().slice(0,4)+"**** 捐赠"+
+                    wei2NAS(item.value)+"NAS</li>";
+                str+=s;
+            });
+            return str;
+        }
+        
+        function fetchAccountState() {
+            if (!user.address) {
+                return
+            }
+            neb.api.getAccountState({
+                address: user.address
+            }).then(function (resp) {
+                console.log(resp);
+                if (resp.error) {
+                    console.log(resp)
+                }
+                let amount = Unit.fromBasic(Utils.toBigNumber(resp.balance), "nas").toNumber();
+                user.balance = amount;
+                $('#balance').html(user.balance+"NAS");
+            });
+        }
+
+        function getWallectInfo() {
+            window.addEventListener('message', function (e) {
+                if(e.data && e.data.data){
+                    if(e.data.data.account){
+                        //获取钱包账户地址
+                        user.address = e.data.data.account;
+                        //通过地址获取账户余额
+                        fetchAccountState();
+                        //生产分享地址与二维码
+                        makeLink(user.address);
+                        makeQR(user.address);
+                    }
+                }
+            });
+
+            window.postMessage({
+                "target": "contentscript",
+                "data": {},
+                "method": "getAccount",
+            }, "*");
+        }
+
+        let intervalQuery;
+
+        $('#btnSubmit').click((e)=> {
+            let value = parseFloat($('#donate-value').val().trim());
+            if(value > user.balance){
+                alert("您的余额不足以进行支付，请重新确认输入");
+                $('#donate-value').val(0);
+                return;
+            }
+            let comment = $('#donate-comment').val().trim();
+            if(!comment || comment.length === 0){
+                comment="一点NAS，不成敬意";
+            }
+
+            let callFunc = "donate";
+            let args = JSON.stringify([toAddr,comment]);
+
+            nebPay.call(testNetAddr, value, callFunc, args, {
+                listener: function (resp) {
+                    if(resp.toString() === "Error: Transaction rejected by user"){
+                        alert("交易取消")
+                    }
+                    console.log(resp);
+                    user.txhash = resp.txhash;
+                    getTranResult(user.txhash);
+                }
+            });
+        });
+
+        let intervalTime = 8;
+        function getTranResult(txhash) {
+            let timer = setInterval(function () {
+                neb.api.getTransactionReceipt({
+                    hash: txhash
+                }).then(function (receipt) {
+                    console.log(receipt);
+                    if(receipt.status === 1){
+                        alert("打包成功，成功上链");
+                        sync(1,1);
+                        clearInterval(timer);
+                    }
+                }).catch(function (err) {
+                    console.log(err);
+                })
+            }, intervalTime * 1000);
+        }
+        $(function() {
+            //获得当前<ul>
+            var $uList = $(".scroll-box");
+            var timer = null;
+            //触摸清空定时器
+            $uList.hover(function() {
+                    clearInterval(timer);
+                },
+                function() { //离开启动定时器
+                    timer = setInterval(function() {
+                            scrollList($uList);
+                        },
+                        1000);
+                }).trigger("mouseleave"); //自动触发触摸事件
+            //滚动动画
+            function scrollList(obj) {
+                //获得当前<li>的高度
+                var scrollHeight = $("ul li:first").height();
+                //滚动出一个<li>的高度
+                $uList.stop().animate({
+                        marginTop: -scrollHeight
+                    },
+                    900,
+                    function() {
+                        //动画结束后，将当前<ul>marginTop置为初始值0状态，再将第一个<li>拼接到末尾。
+                        $uList.css({
+                            marginTop: 0
+                        }).find("li:first").appendTo($uList);
+                    });
+            }
+        });
+
+        function getQueryString(name) {
+            let reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+            let r = window.location.search.substr(1).match(reg);
+            if(r!=null)return  unescape(r[2]); return null;
+        }
+        function makeLink(url) {
+            url = host+"?to="+url;
+            $("#share-link").val(url);
+        }
+        function makeQR(url) {
+            let qrcode = new QRCode(document.getElementById('qr-area'),{
+                width: 100,
+                height: 100
+            });
+            url = host+"?to="+url;
+            console.log(url);
+            qrcode.makeCode(url);
+        }
+
+        //复制捐赠页面至粘贴板
+        let clipboard = new ClipboardJS('#btn-copy-url', {
+            text: function (trigger) {
+                let $trigger = $(trigger);
+                return $trigger.val();
+            }
+        });
+        clipboard.on('success',function (e) {
+            alert("复制成功")
+        });
+        clipboard.on('error',function (e) {
+            alert("复制失败")
+        });
+
+        function formatDateTime(timeStamp) {
+            var date = new Date();
+            date.setTime(timeStamp * 1000);
+            var y = date.getFullYear();
+            var m = date.getMonth() + 1;
+            m = m < 10 ? ('0' + m) : m;
+            var d = date.getDate();
+            d = d < 10 ? ('0' + d) : d;
+            var h = date.getHours();
+            h = h < 10 ? ('0' + h) : h;
+            var minute = date.getMinutes();
+            var second = date.getSeconds();
+            minute = minute < 10 ? ('0' + minute) : minute;
+            second = second < 10 ? ('0' + second) : second;
+            return y + '-' + m + '-' + d+' '+h+':'+minute+':'+second;
+        };
+
+        function wei2NAS(wei) {
+            return Unit.fromBasic(Utils.toBigNumber(wei), "nas").toNumber();
+        }
+
+    </script>
+</body>
+</html>
