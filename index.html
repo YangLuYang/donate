@@ -17,7 +17,7 @@
                 <ul>
                     <li>如果帮您解决了一个Bug</li>
                     <li>如果帮您解决了一个需求</li>
-                    <li>如果您看我顺眼</li>
+                    <li>如果您喜欢我的代码风格</li>
                     <li>如果您有钱任性</li>
                 </ul>
             </div>
@@ -34,8 +34,6 @@
         <div class="notif">
             <div class="wrap2" id="notifC">
                 您的钱包余额为：<b id="balance">0NAS</b>
-                <!--<b>此网站功能依赖于星云链钱包Chrome插件</b>-->
-                <!--<a href="https://github.com/nebulasio/web-wallet" target="_blank">立即下载</a>-->
             </div>
         </div>
     </header>
@@ -121,6 +119,7 @@
                         <h3>
                             您的专属捐赠页面已经创建完毕
                         </h3>
+                        <p>您可以将捐赠页面的地址或者二维码粘贴在GitHub的README或者Segmentfault、知乎、CSDN等文章的后面。</p>
                         <p>您可以选择<b>复制</b>捐赠页面的url，或<b>下载</b>捐赠页面二维码</p>
                         <div class="input-group">
                         <span class="input-group-btn">
@@ -140,8 +139,8 @@
     </div>
 
     <footer>
-        <p>Design By Yang. Powered By <a href="nebulas.io" target="_blank">Nebulas</a>
-            And <a href="#" target="_blank">Bootstrap</a></p>
+        <p>Design By Yang. Powered By <a href="https://nebulas.io/cn/" target="_blank">Nebulas</a>
+            And <a href="https://getbootstrap.com/" target="_blank">Bootstrap</a></p>
     </footer>
 
     <script src="lib/jquery-3.3.1.min.js"></script>
@@ -161,29 +160,31 @@
             let value = $(this).attr('value');
             $('#donate-value').val(value);
         });
+        //初始化弹出窗,每次添加item时调用
+        function initPopover() {
+            $('[data-toggle="popover"]').popover();
+        }
 
         //注意交易reject处理异常
         let chainnetConfig = {
             mainnet: {
                 name: "主网",
-                contractAddress: "n1jWpKadorv27XgSbo4WRZvsyCdAajkEP4B",
-                txhash: "04222aa816c36a7895efd59256f4f2844fae253064ebc40c155266e3d6cc5220",
+                contractAddress: "n1ojzVwAyRusdL8QUMTHft4rYRA5BSkYMt3",
+                txhash: "9d73a4e7d54559c37af6f969c8f5b3f9fa4409f92134280b04c90a1cb739fcf6",
                 host: "https://mainnet.nebulas.io",
                 payhost: "https://pay.nebulas.io/api/mainnet/pay"
             },
             testnet: {
                 name: "测试网",
                 contractAddress: "n1m6TVnQdqG7VkgynvDZeCsJJVnNYKdU8JW",
-                txhash: "0e617d41412a608d06b2419f2ced4818739960ed4677dc2c1fd10a1d881b9f54",
                 host: "https://testnet.nebulas.io",
                 payhost: "https://pay.nebulas.io/api/pay"
             }
         };
-        let chain = "testnet";
+        let chain = "mainnet";
         let chainInfo = chainnetConfig[chain];
-        const testNetAddr = "n1m6TVnQdqG7VkgynvDZeCsJJVnNYKdU8JW";
         let toAddr = "n1G7rADvoFkEcrSwJZJpy9xW37JwkW2n3Cq";
-        let host = "www.example.com";
+        let host = "https://yangluyang.github.io/donate/";
         let nebulas = require("nebulas");
         let NebPay = require("nebpay");
         let Account = nebulas.Account;
@@ -219,10 +220,70 @@
             })
         }
         function sync(index1 = 1, index2 = 1) {
-            fetchUserDonations(index1);
-            fetchDonations(index2);
+            //当所有列表项完成添加以后才能进行Popover初始化
+            Promise.all([getUserDonations(index1),getDonations(index2)]).then(()=>{
+                initPopover();
+            })
         }
         //我的历史捐赠
+        const getUserDonations = function (index = 1, size = 5) {
+          const promise = new Promise(function (resolve, reject) {
+              neb.api.call({
+                  chainID: nebState.chain_id,
+                  from: user.address,
+                  to: chainInfo.contractAddress,
+                  value: 0,
+                  gasPrice: 1000000,
+                  gasLimit: 2000000,
+                  contract: {
+                      function: "getUserDonations",
+                      args: JSON.stringify([index,size])
+                  }
+              }).then(function (resp) {
+                  let result = JSON.parse(resp.result);
+                  if(result){
+                      userDList = result;
+                      console.log(result);
+                      let str = createNewRows(userDList,2);
+                      $('.history-donate').html(str);
+                  }
+                  resolve('ok');
+              }).catch(function (err) {
+                  reject(err);
+              })
+          });
+          return promise;
+        };
+
+        const getDonations = function (index = 1, size = 5) {
+            const promise = new Promise(function (resolve, reject) {
+                neb.api.call({
+                    chainID: nebState.chain_id,
+                    from: user.address,
+                    to: chainInfo.contractAddress,
+                    value: 0,
+                    gasPrice: 1000000,
+                    gasLimit: 2000000,
+                    contract: {
+                        function: "getDonations",
+                        args: JSON.stringify([index,size])
+                    }
+                }).then(function (resp) {
+                    let result = JSON.parse(resp.result);
+                    if(result){
+                        dlist = result;
+                        console.log(result);
+                        let str = createNewRows(dlist,1);
+                        $('.user-donate').html(str);
+                        $('.scroll-box').html(createNewLi(result));
+                    }
+                    resolve('ok');
+                }).catch(function (err) {
+                    reject(err);
+                })
+            });
+            return promise;
+        };
         function fetchUserDonations(index = 1, size = 5) {
             neb.api.call({
                 chainID: nebState.chain_id,
@@ -240,7 +301,7 @@
                 if(result){
                     userDList = result;
                     console.log(result);
-                    let str = createNewRows(userDList);
+                    let str = createNewRows(userDList,2);
                     $('.history-donate').html(str);
                 }
             })
@@ -263,26 +324,42 @@
                 if(result){
                     dlist = result;
                     console.log(result);
-                    let str = createNewRows(dlist);
+                    let str = createNewRows(dlist,1);
                     $('.user-donate').html(str);
-
-                    $('.scroll-box').html(createNewLi(result))
+                    $('.scroll-box').html(createNewLi(result));
                 }
             })
         }
 
-        function createNewRows(list) {
-            if(!list || list.length == 0){
-                return "您还没有一笔donate";
-            }
+        function createNewRows(list, type = 1) {
             let str = '';
-            list.forEach((item)=>{
-                let s =  "<tr><td>"+formatDateTime(item.time)+"</td><td>"+item.from+"</td><td>"+
-                    wei2NAS(item.value)+"NAS"+"</td><td>"+'<button type="button" class="btn btn-default btn-sm" data-container="body" data-placement="left" data-toggle="popover" title="留言详情" data-content="'+item.comment+'">' +
-                    '查看留言</button></td></tr>';
-                str+=s;
-            });
+            if(type === 1){
+                if(!list || list.length === 0){
+                    return "您还没有接收到一笔赞助,切换至'创建捐赠页面'，生成您的赞助链接";
+                }
+                list.forEach((item)=>{
+                    let s =  "<tr><td>"+formatDateTime(item.time)+"</td><td>"+item.from+"</td><td>"+
+                        wei2NAS(item.value)+"NAS"+"</td><td>"+'<a role="button" tabindex="0" data-trigger="focus" class="btn btn-default btn-sm" data-container="body" data-placement="top" data-toggle="popover" title="留言详情" data-content="'+item.comment+'">' +
+                        '查看留言</a></td></tr>';
+                    str+=s;
+                });
+            }else if(type === 2){
+                if(!list || list.length === 0){
+                    return "您还没有进行过donate";
+                }
+                list.forEach((item)=>{
+                    let s =  "<tr><td>"+formatDateTime(item.time)+"</td><td>"+item.to+"</td><td>"+
+                        wei2NAS(item.value)+"NAS"+"</td><td>"+'<a role="button" tabindex="0" data-trigger="focus" class="btn btn-default btn-sm" data-container="body" data-placement="top" data-toggle="popover" title="留言详情" data-content="'+item.comment+'">' +
+                        '查看留言</a></td></tr>';
+                    str+=s;
+                });
+            }
+
             return str;
+        }
+
+        function jumpToShare() {
+
         }
 
         function createNewLi(list) {
@@ -334,8 +411,6 @@
             }, "*");
         }
 
-        let intervalQuery;
-
         $('#btnSubmit').click((e)=> {
             let value = parseFloat($('#donate-value').val().trim());
             if(value > user.balance){
@@ -351,7 +426,7 @@
             let callFunc = "donate";
             let args = JSON.stringify([toAddr,comment]);
 
-            nebPay.call(testNetAddr, value, callFunc, args, {
+            nebPay.call(chainInfo.contractAddress, value, callFunc, args, {
                 listener: function (resp) {
                     if(resp.toString() === "Error: Transaction rejected by user"){
                         alert("交易取消")
@@ -371,12 +446,13 @@
                 }).then(function (receipt) {
                     console.log(receipt);
                     if(receipt.status === 1){
-                        alert("打包成功，成功上链");
+                        alert("捐赠成功，作者获得咖啡一杯");
                         sync(1,1);
                         clearInterval(timer);
                     }
                 }).catch(function (err) {
                     console.log(err);
+                    clearInterval(timer);
                 })
             }, intervalTime * 1000);
         }
