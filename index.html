@@ -219,13 +219,18 @@
                 sync();
             })
         }
+
         function sync(index1 = 1, index2 = 1) {
-            //当所有列表项完成添加以后才能进行Popover初始化
-            Promise.all([getUserDonations(index1),getDonations(index2)]).then(()=>{
-                initPopover();
-            })
+            //当所有列表项完成添加后进行Popover初始化
+            Promise.all([getUserDonations(index1),getDonations(index2)])
+                .then(()=>{
+                    initPopover();
+                })
+                .catch(e=>{
+                    console.log(e);
+                })
         }
-        //我的历史捐赠
+        //历史捐赠
         const getUserDonations = function (index = 1, size = 5) {
           const promise = new Promise(function (resolve, reject) {
               neb.api.call({
@@ -254,12 +259,12 @@
           });
           return promise;
         };
-
+        //用户收到的捐赠
         const getDonations = function (index = 1, size = 5) {
             const promise = new Promise(function (resolve, reject) {
                 neb.api.call({
                     chainID: nebState.chain_id,
-                    from: user.address,
+                    from: toAddr,
                     to: chainInfo.contractAddress,
                     value: 0,
                     gasPrice: 1000000,
