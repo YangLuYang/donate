@@ -2,6 +2,12 @@
     padding: 0;
     margin: 0;
 }
+html,body{
+    /*width:-webkit-fit-content;*/
+}
+html,body{
+    /*width:-moz-fit-content;*/
+}
 ul {
     list-style: none;
 }
@@ -146,14 +152,13 @@ footer {
     overflow: hidden;
     position: absolute;
     bottom: 0;
-    color: #FFF;
     width: 100%;
+    color: #FFF;
     height: 56px;
     text-align: center;
     padding: 16px;
     min-height: 0;
     margin: 0 auto;
-    max-width: 1090px;
     z-index: 2;
 }
 

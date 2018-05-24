@@ -25,7 +25,6 @@
                 <ul class="scroll-box">
                     <li>2018/05/12 n1sdf**请我喝了杯星巴克</li>
                     <li>2018/05/11 n1wrf**请我喝了杯雀巢速溶</li>
-                    <li>2018/05/11 n1acx**请我喝了杯挂耳</li>
                     <li>2018/05/10 n1gk1**请我喝了杯手冲</li>
                     <li>2018/05/09 n1sjb**请我喝了杯星巴克</li>
                 </ul>
@@ -143,6 +142,7 @@
             And <a href="https://getbootstrap.com/" target="_blank">Bootstrap</a></p>
     </footer>
 
+
     <script src="lib/jquery-3.3.1.min.js"></script>
     <script src="lib/nebulas.js"></script>
     <script src="lib/nebPay.js"></script>
@@ -154,18 +154,17 @@
         if(typeof(webExtensionWallet) === "undefined"){
             $('#notifC').html('<b>此网站功能依赖于星云链钱包Chrome插件</b> <a href="https://github.com/nebulasio/web-wallet" target="_blank">立即下载</a>');
         }
-        //捐赠页面
+        //捐赠页面radio监听
         $('#donate-value').val(1);
         $('input[name=options]').on('change',function () {
             let value = $(this).attr('value');
             $('#donate-value').val(value);
         });
-        //初始化弹出窗,每次添加item时调用
+        //bootstrap初始化弹窗,每次添加item结束时调用
         function initPopover() {
             $('[data-toggle="popover"]').popover();
         }
 
-        //注意交易reject处理异常
         let chainnetConfig = {
             mainnet: {
                 name: "主网",
@@ -183,11 +182,10 @@
         };
         let chain = "mainnet";
         let chainInfo = chainnetConfig[chain];
-        let toAddr = "n1G7rADvoFkEcrSwJZJpy9xW37JwkW2n3Cq";
+        let toAddr = "";
         let host = "https://yangluyang.github.io/donate/";
         let nebulas = require("nebulas");
         let NebPay = require("nebpay");
-        let Account = nebulas.Account;
         let neb = new nebulas.Neb();
         let nebPay = new NebPay();
         let HttpRequest = nebulas.HttpRequest;
@@ -205,7 +203,7 @@
         //TODO 对两个数组进行排序
         $().ready(function () {
             //通过url获取受捐者账户信息
-            toAddr = getQueryString("to") || "n1G7rADvoFkEcrSwJZJpy9xW37JwkW2n3Cq";
+            toAddr = getQueryString("to") || "n1P89SB4AAbcfEb3FJFz2KibThPqttdy2XR";
             //查询Neb状态
             fetchNebState();
             //查询钱包账户信息
@@ -222,7 +220,7 @@
 
         function sync(index1 = 1, index2 = 1) {
             //当所有列表项完成添加后进行Popover初始化
-            Promise.all([getUserDonations(index1),getDonations(index2)])
+            Promise.all([getUserDonations(index1),getDonations(index2), getUrlDonations()])
                 .then(()=>{
                     initPopover();
                 })
@@ -230,7 +228,7 @@
                     console.log(e);
                 })
         }
-        //历史捐赠
+        //钱包用户的历史捐赠
         const getUserDonations = function (index = 1, size = 5) {
           const promise = new Promise(function (resolve, reject) {
               neb.api.call({
@@ -259,8 +257,37 @@
           });
           return promise;
         };
-        //用户收到的捐赠
+        //钱包用户收到的捐赠
         const getDonations = function (index = 1, size = 5) {
+            const promise = new Promise(function (resolve, reject) {
+                neb.api.call({
+                    chainID: nebState.chain_id,
+                    from: user.address,
+                    to: chainInfo.contractAddress,
+                    value: 0,
+                    gasPrice: 1000000,
+                    gasLimit: 2000000,
+                    contract: {
+                        function: "getDonations",
+                        args: JSON.stringify([index,size])
+                    }
+                }).then(function (resp) {
+                    let result = JSON.parse(resp.result);
+                    if(result){
+                        dlist = result;
+                        console.log(result);
+                        let str = createNewRows(dlist,1);
+                        $('.user-donate').html(str);
+                    }
+                    resolve('ok');
+                }).catch(function (err) {
+                    reject(err);
+                })
+            });
+            return promise;
+        };
+        //该链接对应用户收到的捐赠
+        const getUrlDonations = function(index = 1, size = 5) {
             const promise = new Promise(function (resolve, reject) {
                 neb.api.call({
                     chainID: nebState.chain_id,
@@ -278,62 +305,14 @@
                     if(result){
                         dlist = result;
                         console.log(result);
-                        let str = createNewRows(dlist,1);
-                        $('.user-donate').html(str);
                         $('.scroll-box').html(createNewLi(result));
+                        resolve('ok');
                     }
-                    resolve('ok');
                 }).catch(function (err) {
                     reject(err);
                 })
             });
             return promise;
-        };
-        function fetchUserDonations(index = 1, size = 5) {
-            neb.api.call({
-                chainID: nebState.chain_id,
-                from: user.address,
-                to: chainInfo.contractAddress,
-                value: 0,
-                gasPrice: 1000000,
-                gasLimit: 2000000,
-                contract: {
-                    function: "getUserDonations",
-                    args: JSON.stringify([index,size])
-                }
-            }).then(function (resp) {
-                let result = JSON.parse(resp.result);
-                if(result){
-                    userDList = result;
-                    console.log(result);
-                    let str = createNewRows(userDList,2);
-                    $('.history-donate').html(str);
-                }
-            })
-        }
-        //我收到的捐赠
-        function fetchDonations(index = 1, size = 5) {
-            neb.api.call({
-                chainID: nebState.chain_id,
-                from: toAddr,
-                to: chainInfo.contractAddress,
-                value: 0,
-                gasPrice: 1000000,
-                gasLimit: 2000000,
-                contract: {
-                    function: "getDonations",
-                    args: JSON.stringify([index,size])
-                }
-            }).then(function (resp) {
-                let result = JSON.parse(resp.result);
-                if(result){
-                    dlist = result;
-                    console.log(result);
-                    let str = createNewRows(dlist,1);
-                    $('.user-donate').html(str);
-                    $('.scroll-box').html(createNewLi(result));
-                }
-            })
         }
 
         function createNewRows(list, type = 1) {
@@ -361,10 +340,6 @@
             }
 
             return str;
-        }
-
-        function jumpToShare() {
-
         }
 
         function createNewLi(list) {
@@ -438,6 +413,7 @@
                     }
                     console.log(resp);
                     user.txhash = resp.txhash;
+                    //验证交易是否成功
                     getTranResult(user.txhash);
                 }
             });
@@ -453,6 +429,8 @@
                     if(receipt.status === 1){
                         alert("捐赠成功，作者获得咖啡一杯");
                         sync(1,1);
+                        //重新获取钱包余额
+                        fetchAccountState();
                         clearInterval(timer);
                     }
                 }).catch(function (err) {
@@ -464,6 +442,10 @@
         $(function() {
             //获得当前<ul>
             var $uList = $(".scroll-box");
+            if($uList.children('li').length <=4){
+                return;
+            }
+            //获得当前
             var timer = null;
             //触摸清空定时器
             $uList.hover(function() {
