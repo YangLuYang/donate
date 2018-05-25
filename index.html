@@ -23,10 +23,6 @@
             </div>
             <div class="donate-list">
                 <ul class="scroll-box">
-                    <li>2018/05/12 n1sdf**请我喝了杯星巴克</li>
-                    <li>2018/05/11 n1wrf**请我喝了杯雀巢速溶</li>
-                    <li>2018/05/10 n1gk1**请我喝了杯手冲</li>
-                    <li>2018/05/09 n1sjb**请我喝了杯星巴克</li>
                 </ul>
             </div>
         </div>
@@ -223,6 +219,7 @@
             Promise.all([getUserDonations(index1),getDonations(index2), getUrlDonations()])
                 .then(()=>{
                     initPopover();
+                    initScrollBox();
                 })
                 .catch(e=>{
                     console.log(e);
@@ -439,7 +436,7 @@
                 })
             }, intervalTime * 1000);
         }
-        $(function() {
+        function initScrollBox() {
             //获得当前<ul>
             var $uList = $(".scroll-box");
             if($uList.children('li').length <=4){
@@ -473,7 +470,7 @@
                         }).find("li:first").appendTo($uList);
                     });
             }
-        });
+        }
 
         function getQueryString(name) {
             let reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
